@@ -155,10 +155,10 @@ d. Merge all video chunks into a complete video:
 ```bash
 python merge.py --video_path "examples/video1.mp4" --video_root "results/generated"
 
-# optionally delete cached tensors
-rm -r results/generated/attn_maps* results/generated/qkv
-
-# optionally delete video chunks
+# optionally delete cached tensors and video chunks
+rm results/generated/*.json
+rm -r results/generated/attn_maps*
+rm -r results/generated/qkv
 rm -r results/generated/video-chunk*
 ```
 
