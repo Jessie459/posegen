@@ -46,17 +46,20 @@ def soft_append_frames(history: list[np.ndarray], current: list[np.ndarray], ove
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video_path", type=str, required=True)
+    parser.add_argument("--video_path", type=str, required=False, default=None)
     parser.add_argument("--video_root", type=str, required=True)
     args = parser.parse_args()
 
     head_length = 21
     tail_length = 20
 
-    cap = cv2.VideoCapture(args.video_path)
-    orig_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    print(f"Original length: {orig_length}")
-    cap.release()
+    if args.video_path:
+        cap = cv2.VideoCapture(args.video_path)
+        orig_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        print(f"Original length: {orig_length}")
+        cap.release()
+    else:
+        orig_length = None
 
     video_root = args.video_root
     video_paths = glob.glob(os.path.join(video_root, "video-chunk-*.mp4"))
@@ -87,7 +90,10 @@ def main():
             base_videos = base_videos[1:]
         history = soft_append_frames(history, current, overlap=overlap)
 
-    video = history[:orig_length]
+    if orig_length:
+        video = history[:orig_length]
+    else:
+        video = history
     save_video(os.path.join(video_root, "video.mp4"), video, fps=30)
 
 

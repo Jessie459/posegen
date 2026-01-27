@@ -52,6 +52,7 @@ def parse_args():
     parser.add_argument("-s", "--kvshare_step_range", type=int, nargs="+", default=[0, 2])
     parser.add_argument("-b", "--kvshare_block_range", type=int, nargs="+", default=[34, 40])
     parser.add_argument("-p", "--num_persistent_param_in_dit", type=str, default=None)
+    parser.add_argument("--max_chunks", type=int, default=None)
     return parser.parse_args()
 
 
@@ -222,6 +223,14 @@ def main():
     #     save_video(os.path.join(output_dir, "video_hand.mp4"), viz_hand, fps=args.fps)
 
     negative_prompt = "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
+
+    max_chunks = args.max_chunks
+    if max_chunks is not None and max_chunks > 0:
+        print(f"** max_chunks: {max_chunks}")
+        assert max_chunks % 2 == 1, "`max_chunks` should be an odd number"
+        assert args.anch_chunk_idx < max_chunks, "`anch_chunk_idx` out of range"
+        num_chunks = min(num_chunks, max_chunks)
+        print(f"** num_chunks: {num_chunks}")
 
     anch_chunk_indices = [args.anch_chunk_idx]
     base_chunk_indices = list(range(0, num_chunks, 2))
